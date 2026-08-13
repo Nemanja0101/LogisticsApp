@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:18
+    container_name: logistics_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: logistics
+    ports:
+      - "5432:5432"
+
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8888:8080"
+
