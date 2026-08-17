@@ -1,4 +1,4 @@
-package com.zavrsniRad.LogisticsApp.controllers;
+package com.zavrsniRad.LogisticsApp.controllers.test;
 
 
 import org.springframework.http.ResponseEntity;

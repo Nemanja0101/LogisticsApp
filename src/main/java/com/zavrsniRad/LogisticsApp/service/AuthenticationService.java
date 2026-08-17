@@ -1,7 +1,11 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 
+import com.zavrsniRad.LogisticsApp.domain.UserRole;
+import com.zavrsniRad.LogisticsApp.domain.dto.SignUpRequest;
+import com.zavrsniRad.LogisticsApp.domain.dto.SignUpResponse;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
+import com.zavrsniRad.LogisticsApp.exceptions.UserAlreadyExistsException;
 import com.zavrsniRad.LogisticsApp.repositories.UserRepository;
 import com.zavrsniRad.LogisticsApp.security.LogisticsUserDetails;
 import io.jsonwebtoken.Claims;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +98,28 @@ public class AuthenticationService {
     }
 
 
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new UserAlreadyExistsException("Email already in use with a different account");
+        }
+
+        User user = User.builder()
+                .email(signUpRequest.getEmail())
+                .firstName(signUpRequest.getFirstName())
+                .lastName(signUpRequest.getLastName())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .role(UserRole.ADMIN)  // <--- to change later
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        return SignUpResponse.builder()
+                .message("Sign up complete. Please proceed to log in.")
+                .id(savedUser.getId())
+                .email(savedUser.getEmail())
+                .build();
 
 
+    }
 }

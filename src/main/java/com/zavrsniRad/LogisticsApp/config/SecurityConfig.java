@@ -43,7 +43,7 @@ public class SecurityConfig {
                 authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/v1/test").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(AbstractHttpConfigurer::disable)
