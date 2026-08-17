@@ -1,6 +1,7 @@
 package com.zavrsniRad.LogisticsApp.domain.models;
 
 
+import com.zavrsniRad.LogisticsApp.domain.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,16 +25,19 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String firstName;
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
 
     @Column(name = "first_name", nullable = false)
-    private String lastName;
+    private String firstName;
 
     @Column(name = "last_name", nullable = false)
-    private String password;
+    private String lastName;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
