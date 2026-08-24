@@ -1,7 +1,7 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 
-import com.zavrsniRad.LogisticsApp.domain.UserRole;
+import com.zavrsniRad.LogisticsApp.domain.enums.UserRole;
 import com.zavrsniRad.LogisticsApp.domain.dto.SignUpRequest;
 import com.zavrsniRad.LogisticsApp.domain.dto.SignUpResponse;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
