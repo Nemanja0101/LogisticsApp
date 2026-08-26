@@ -1,27 +1,35 @@
-package com.zavrsniRad.LogisticsApp.domain.models;
+package com.zavrsniRad.LogisticsApp.domain.models.crew;
 
+
+import com.zavrsniRad.LogisticsApp.domain.models.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "shipments")
+@Table(name = "crew_members")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Shipment {
+public class CrewMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToMany(mappedBy = "shipment")
-    private List<Freight> freights;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+//    @Embedded
+//    private License license;
+//
+//    @OneToMany(mappedBy = "crewMember")
+//    private List<CrewAssignment> assignments;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

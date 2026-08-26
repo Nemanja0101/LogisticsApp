@@ -30,6 +30,10 @@ CREATE TABLE freights
     id                UUID PRIMARY KEY,
     name              VARCHAR(255) NOT NULL,
     description       TEXT,
+    weight_kg         DOUBLE PRECISION NOT NULL,
+    length_cm         DOUBLE PRECISION NOT NULL,
+    width_cm          DOUBLE PRECISION NOT NULL,
+    height_cm         DOUBLE PRECISION NOT NULL,
     shipment_order_id UUID         NOT NULL references shipment_orders (id),
     shipment_id       UUID references shipments (id),
     created_at        TIMESTAMP    NOT NULL DEFAULT now()

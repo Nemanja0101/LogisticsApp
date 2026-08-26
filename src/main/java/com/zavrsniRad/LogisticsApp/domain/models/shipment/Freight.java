@@ -1,4 +1,4 @@
-package com.zavrsniRad.LogisticsApp.domain.models;
+package com.zavrsniRad.LogisticsApp.domain.models.shipment;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +24,19 @@ public class Freight {
 
     @Column(nullable = true)
     private String description;
+
+    @Column(name = "weight_kg", nullable = false)
+    private Double weightKg;
+
+    @Column(name = "length_cm", nullable = false)
+    private Double lengthCm;
+
+    @Column(name = "width_cm", nullable = false)
+    private Double widthCm;
+
+    @Column(name = "height_cm", nullable = false)
+    private Double heightCm;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipment_order_id", nullable = false)

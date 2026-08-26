@@ -1,4 +1,4 @@
-package com.zavrsniRad.LogisticsApp.domain.models;
+package com.zavrsniRad.LogisticsApp.domain.models.shipment;
 
 import jakarta.persistence.*;
 import lombok.*;

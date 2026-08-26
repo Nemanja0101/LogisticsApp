@@ -1,12 +1,14 @@
 package com.zavrsniRad.LogisticsApp.controllers;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.CustomErrorResponse;
+import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,20 +36,48 @@ public class ErrorController {
 
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<CustomErrorResponse> handleValidationErrors(BadCredentialsException ex) {
-
-
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<CustomErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 
         CustomErrorResponse errorResponse = CustomErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation failure")
-                .message("One or more fields are invalid")
+                .error("Invalid Parameter")
+                .message("Invalid value for parameter: " + ex.getName())
+                .details(new ArrayList<>())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<CustomErrorResponse> handleBadCredentialErrors(BadCredentialsException ex) {
+
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Bad Credentials")
+                .message("Your credentials are not correct")
                 .details(new ArrayList<>())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleResourceNotFoundError(ResourceNotFoundException ex){
+
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Resource Not Found")
+                .message(ex.getMessage())
+                .details(new ArrayList<>())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+
 
     }
 
