@@ -1,0 +1,98 @@
+package com.zavrsniRad.LogisticsApp.service;
+
+import com.zavrsniRad.LogisticsApp.domain.dto.company.CompanyResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.company.CreateUpdateCompany;
+import com.zavrsniRad.LogisticsApp.domain.dto.company.PatchCompanyRequest;
+import com.zavrsniRad.LogisticsApp.domain.dto.company.SingleCompanyResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.CreateUpdateShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.models.Company;
+import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
+import com.zavrsniRad.LogisticsApp.mappers.CompanyMapper;
+import com.zavrsniRad.LogisticsApp.repositories.CompanyRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class CompanyService {
+
+    private final CompanyMapper companyMapper;
+    private final CompanyRepository companyRepository;
+
+    public List<CompanyResponse> getAllCompanies() {
+
+        List<Company> allCompanies = companyRepository.findAll();
+
+        return allCompanies.stream()
+                .map(companyMapper::toResponse)
+                .toList();
+
+    }
+
+    public SingleCompanyResponse getCompany(UUID id) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Company with the ID:" + id + " doesn't exist"));
+
+        return companyMapper.toSingleCompany(company);
+
+    }
+
+    public SingleCompanyResponse createCompany(CreateUpdateCompany createCompany) {
+
+        Company created = companyMapper.toEntity(createCompany);
+        Company saved = companyRepository.save(created);
+
+        return companyMapper.toSingleCompany(saved);
+    }
+
+    public void deleteCompany(UUID id) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Company with the ID:" + id + " doesn't exist"));
+
+        companyRepository.delete(company);
+    }
+
+    @Transactional
+    public SingleCompanyResponse updateCompany(CreateUpdateCompany updateRequest, UUID id) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Company with the ID:" + id + " doesn't exist"));
+
+        company.setName(updateRequest.getName());
+        company.setRegistrationNumber(updateRequest.getRegistrationNumber());
+
+        Company saved = companyRepository.save(company);
+
+        return companyMapper.toSingleCompany(saved);
+
+    }
+
+
+    @Transactional
+    public SingleCompanyResponse patchCompany(PatchCompanyRequest patchRequest, UUID id) {
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Company with the ID:" + id + " doesn't exist"));
+
+
+        if (patchRequest.getName()!= null){
+            company.setName(patchRequest.getName());
+        }
+
+        if (patchRequest.getRegistrationNumber()!=null){
+            company.setRegistrationNumber(patchRequest.getRegistrationNumber());
+        }
+
+        Company saved = companyRepository.save(company);
+
+        return companyMapper.toSingleCompany(saved);
+
+    }
+}

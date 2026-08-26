@@ -137,33 +137,4 @@ public class ShipmentOrderController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
-
-
-/*
-    FINISHED:
-    GET  /api/v1/shipment-orders                        -> GETS ALL SHIPMENT ORDERS IN THE DB
-    GET /api/v1/shipment-orders/{id}                    -> GETS THE SPECIFIC SHIPMENT ORDER WITH THE ID
-    POST /api/v1/shipment-orders                        -> CREATES A SINGLE SHIPMENT ORDER
-    POST /api/v1/shipment-orders/{orderId}/freights     -> CREATE A SINGLE FREIGHT
-    GET  /api/v1/shipment-orders/{orderId}/freights     -> GET ALL FREIGHTS ON A SHIPMENT ORDER
-    GET  /api/v1/shipment-orders/{orderId}/freights/{freightId} -> GET A SINGLE FREIGHT
-    PUT /api/v1/shipment-orders/{id}        -> FULL UPDATE / REPLACE THE EVENT WITH THE EVENT BODY PROVIDED
-    PATCH  /api/v1/shipment-orders/{id}     -> partial update
-        PATCH /api/v1/shipment-orders/{id}/status   body: { "status": "CONFIRMED" }
-    DELETE /api/v1/shipment-orders/{id}     -> DELETES A SHIPMENT ORDER
-
-
-
-
-    */
-
-
-
-
-
-
-
-
-
-
 }

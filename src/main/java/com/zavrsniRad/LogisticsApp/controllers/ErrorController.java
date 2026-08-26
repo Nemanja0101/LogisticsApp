@@ -2,9 +2,12 @@ package com.zavrsniRad.LogisticsApp.controllers;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.CustomErrorResponse;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
+import com.zavrsniRad.LogisticsApp.exceptions.UserAlreadyExistsException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +19,51 @@ import java.util.List;
 
 @RestControllerAdvice
 public class ErrorController {
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<CustomErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("Email Already In Use")
+                .message("An account with this email address already exists.")
+                .details(new ArrayList<>())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<CustomErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Bad Credentials")
+                .message("Your credentials are not correct")
+                .details(new ArrayList<>())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<CustomErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message("The request could not be completed because it conflicts with existing data.")
+                .details(new ArrayList<>())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {

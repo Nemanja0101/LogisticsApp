@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +32,8 @@ public class Company {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "company")
-    private List<UserCompany> memberships;
+    @Builder.Default
+    private List<UserCompany> memberships = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() { this.createdAt = LocalDateTime.now(); }

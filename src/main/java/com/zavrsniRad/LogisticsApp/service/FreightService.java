@@ -31,19 +31,6 @@ public class FreightService {
 
         Freight newFreight = freightMapper.toEntity(request);
         newFreight.setShipmentOrder(order);
-
-//
-//        Freight newFreight = Freight.builder()
-//                .name(request.getName())
-//                .description(request.getDescription())
-//                .weightKg(request.getWeightKg())
-//                .lengthCm(request.getLengthCm())
-//                .widthCm(request.getWidthCm())
-//                .heightCm(request.getHeightCm())
-//                .shipmentOrder(shipmentOrderRepository.getReferenceById(orderId))
-//                .shipment(null)
-//                .build();
-
         Freight savedFreight = freightRepository.save(newFreight);
 
         return freightMapper.toResponse(savedFreight);
@@ -51,6 +38,11 @@ public class FreightService {
     }
 
     public List<FreightResponse> getAllFreightsOnShipmentOrder(UUID orderId) {
+
+        shipmentOrderRepository.findById(orderId).orElseThrow(
+                () -> new ResourceNotFoundException("Shipment with the ID:" + orderId + "doesn't exist")
+        );
+
 
         return freightRepository.findAllByShipmentOrderId(orderId)
                 .stream()
