@@ -1,4 +1,4 @@
-package com.zavrsniRad.LogisticsApp.domain.dto.shipment;
+package com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight;
 
 
 import jakarta.validation.constraints.NotEmpty;

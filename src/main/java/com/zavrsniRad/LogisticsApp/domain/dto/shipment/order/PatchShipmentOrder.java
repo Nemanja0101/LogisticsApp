@@ -1,6 +1,5 @@
-package com.zavrsniRad.LogisticsApp.domain.dto.shipment;
+package com.zavrsniRad.LogisticsApp.domain.dto.shipment.order;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

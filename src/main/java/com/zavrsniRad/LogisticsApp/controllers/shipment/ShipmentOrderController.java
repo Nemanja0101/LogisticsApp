@@ -1,7 +1,13 @@
 package com.zavrsniRad.LogisticsApp.controllers.shipment;
 
 
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.*;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.CreateFreight;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.PatchFreight;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.CreateUpdateShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.PatchShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.ShipmentOrderResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.UpdateShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.service.FreightService;
 import com.zavrsniRad.LogisticsApp.service.ShipmentOrderService;
 import jakarta.validation.Valid;

@@ -23,6 +23,7 @@ public interface FreightRepository extends JpaRepository<Freight, UUID> {
     long countByShipmentOrderId(UUID shipmentOrderId);
 
     List<Freight> findAllByShipmentOrderId(UUID shipmentOrderId);
+    List<Freight> findAllByShipmentId(UUID shipmentId);
 
     Optional<Freight> findByIdAndShipmentOrderId(UUID id, UUID shipmentOrderId);
 

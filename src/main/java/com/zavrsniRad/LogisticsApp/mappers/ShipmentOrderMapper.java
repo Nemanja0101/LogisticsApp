@@ -1,7 +1,7 @@
 package com.zavrsniRad.LogisticsApp.mappers;
 
 
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentOrderResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.ShipmentOrderResponse;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,9 +1,9 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.CreateFreight;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.FreightResponse;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.PatchFreight;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.CreateFreight;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.PatchFreight;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;

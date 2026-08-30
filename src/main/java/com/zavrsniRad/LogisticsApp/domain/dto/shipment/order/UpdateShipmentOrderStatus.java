@@ -1,4 +1,4 @@
-package com.zavrsniRad.LogisticsApp.domain.dto.shipment;
+package com.zavrsniRad.LogisticsApp.domain.dto.shipment.order;
 
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import jakarta.validation.constraints.NotNull;

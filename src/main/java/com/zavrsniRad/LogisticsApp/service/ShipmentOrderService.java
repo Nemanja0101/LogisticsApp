@@ -1,9 +1,9 @@
 package com.zavrsniRad.LogisticsApp.service;
 
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.CreateUpdateShipmentOrder;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.PatchShipmentOrder;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentOrderResponse;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.UpdateShipmentOrderStatus;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.CreateUpdateShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.PatchShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.ShipmentOrderResponse;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.order.UpdateShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Location;
@@ -15,7 +15,6 @@ import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
 import com.zavrsniRad.LogisticsApp.repositories.LocationRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentOrderRepository;
 import com.zavrsniRad.LogisticsApp.security.CurrentUserProvider;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

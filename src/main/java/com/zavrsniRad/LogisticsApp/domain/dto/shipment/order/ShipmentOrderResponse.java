@@ -1,5 +1,6 @@
-package com.zavrsniRad.LogisticsApp.domain.dto.shipment;
+package com.zavrsniRad.LogisticsApp.domain.dto.shipment.order;
 
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.LocationResponse;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
