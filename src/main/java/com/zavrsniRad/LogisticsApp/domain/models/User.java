@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,7 +41,8 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    private List<UserCompany> companyMemberships;
+    @Builder.Default
+    private List<UserCompany> companyMemberships = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

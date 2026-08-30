@@ -1,14 +1,13 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 
-import com.zavrsniRad.LogisticsApp.domain.dto.user.ChangePassword;
-import com.zavrsniRad.LogisticsApp.domain.dto.user.PatchUserRequest;
-import com.zavrsniRad.LogisticsApp.domain.dto.user.UpdateUserRole;
-import com.zavrsniRad.LogisticsApp.domain.dto.user.UserResponse;
+import com.zavrsniRad.LogisticsApp.config.PasswordGenerator;
+import com.zavrsniRad.LogisticsApp.domain.dto.user.*;
 import com.zavrsniRad.LogisticsApp.domain.enums.UserRole;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
+import com.zavrsniRad.LogisticsApp.exceptions.UserAlreadyExistsException;
 import com.zavrsniRad.LogisticsApp.mappers.UserMapper;
 import com.zavrsniRad.LogisticsApp.repositories.RefreshTokenRepository;
 import com.zavrsniRad.LogisticsApp.repositories.UserRepository;
@@ -33,6 +32,7 @@ public class UserService {
     private final CurrentUserProvider currentUserProvider;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordGenerator passwordGenerator;
 
 
     public UserResponse getSingleUserAdminGated(UUID id) {
@@ -152,5 +152,26 @@ public class UserService {
         User saved = userRepository.save(user);
         refreshTokenRepository.deleteByUserId(saved.getId());
         
+    }
+
+    public CreateUserResponse createUser(CreateUser createUser) {
+
+        if(userRepository.existsByEmailAndDeactivatedAtIsNull(createUser.getEmail())){
+            throw new UserAlreadyExistsException("Email already in use");
+        }
+
+        String randomPassword = passwordGenerator.generate(16);
+
+        User user = User.builder()
+                .email(createUser.getEmail())
+                .firstName(createUser.getFirstName())
+                .lastName(createUser.getLastName())
+                .password(passwordEncoder.encode(randomPassword))
+                .role(createUser.getUserRole())
+                .build();
+
+        User saved = userRepository.save(user);
+        return userMapper.toCreateUserResponse(saved, randomPassword);
+
     }
 }
