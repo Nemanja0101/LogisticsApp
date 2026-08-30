@@ -5,8 +5,10 @@ import com.zavrsniRad.LogisticsApp.domain.dto.shipment.PatchShipmentOrder;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentOrderResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.UpdateShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
+import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Location;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
+import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.ShipmentOrderMapper;
 import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
@@ -33,9 +35,11 @@ public class ShipmentOrderService {
     private final CurrentUserProvider currentUserProvider;
     private final LocationRepository locationRepository;
 
+
+//    ADMIN path
     public List<ShipmentOrderResponse> getAllShipmentOrders(){
 
-        List<ShipmentOrder> orders = shipmentOrderRepository.findAll();
+        List<ShipmentOrder> orders = shipmentOrderRepository.findAllWithLocations();
 
         List<UUID> ordersList = orders
                 .stream()
@@ -70,6 +74,38 @@ public class ShipmentOrderService {
 
     }
 
+    @Transactional
+    public List<ShipmentOrderResponse> getAllMyShipmentOrders() {
+
+        User currentUser = currentUserProvider.getCurrentUser();
+
+        List<ShipmentOrder> orders = shipmentOrderRepository.findAllByCustomerId(currentUser.getId());
+
+        List<UUID> ordersList = orders
+                .stream()
+                .map(ShipmentOrder::getId)
+                .toList();
+
+        Map<UUID, Long> countsByOrderIds =
+                freightRepository.countByShipmentOrderIds(ordersList)
+                        .stream()
+                        .collect(
+                                Collectors.toMap(
+                                        row -> (UUID) row[0],
+                                        row -> (Long) row[1]
+                                )
+                        );
+
+        return orders
+                .stream()
+                .map(order-> shipmentOrderMapper.toResponse(
+                        order,
+                        countsByOrderIds.getOrDefault(order.getId(), 0L)
+                ))
+                .toList();
+
+    }
+
 
     @Transactional
     public ShipmentOrderResponse createShipmentOrder(CreateUpdateShipmentOrder createUpdateShipmentOrder) {
@@ -96,12 +132,15 @@ public class ShipmentOrderService {
 
     public ShipmentOrderResponse getShipmentOrder(UUID id) {
 
-        ShipmentOrder shipmentOrder = shipmentOrderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Shipment order with the provided ID: " + id + " doesn't exist."));
+        User currentUser = currentUserProvider.getCurrentUser();
 
+        ShipmentOrder shipmentOrder = currentUserProvider.isStaff()
+                ? shipmentOrderRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Shipment order with the provided ID: " + id + " doesn't exist."))
+                : shipmentOrderRepository.findByIdAndCustomerId(id, currentUser.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Shipment order with the provided ID: " + id + " doesn't exist."));
 
-        return shipmentOrderMapper.toResponse(shipmentOrder, shipmentOrder.getFreights().size());
-
+        return shipmentOrderMapper.toResponse(shipmentOrder, freightRepository.countByShipmentOrderId(id));
     }
 
     @Transactional
@@ -109,6 +148,11 @@ public class ShipmentOrderService {
 
         ShipmentOrder shipmentOrder = shipmentOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shipment order with the provided ID: " + id + " doesn't exist."));
+
+        if(!currentUserProvider.isOwnerOrStaff(shipmentOrder.getCustomer().getId())){
+            throw new ResourceNotFoundException("The shipment order with the provided ID:" + id + " doesn't exist");
+        }
+
 
         Location startLocation =
                 locationRepository.findById(updateShipmentOrder.getStartLocationId())
@@ -123,7 +167,7 @@ public class ShipmentOrderService {
 //        not needed, just a safeguard
         ShipmentOrder savedShipmentOrder= shipmentOrderRepository.save(shipmentOrder);
 
-        return shipmentOrderMapper.toResponse(savedShipmentOrder, savedShipmentOrder.getFreights().size());
+        return shipmentOrderMapper.toResponse(savedShipmentOrder, freightRepository.countByShipmentOrderId(id));
 
     }
 
@@ -133,6 +177,11 @@ public class ShipmentOrderService {
 
         ShipmentOrder shipmentOrder = shipmentOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shipment order with the provided ID: " + id + " doesn't exist."));
+
+        if(!currentUserProvider.isOwnerOrStaff(shipmentOrder.getCustomer().getId())){
+            throw new ResourceNotFoundException("The shipment order with the provided ID:" + id + " doesn't exist");
+        }
+
 
         UUID startLocationId = updateShipmentOrder.getStartLocationId();
         UUID endLocationId = updateShipmentOrder.getEndLocationId();
@@ -154,7 +203,7 @@ public class ShipmentOrderService {
 
         ShipmentOrder savedShipmentOrder= shipmentOrderRepository.save(shipmentOrder);
 
-        return shipmentOrderMapper.toResponse(savedShipmentOrder, savedShipmentOrder.getFreights().size());
+        return shipmentOrderMapper.toResponse(savedShipmentOrder, freightRepository.countByShipmentOrderId(id));
 
     }
 
@@ -168,12 +217,22 @@ public class ShipmentOrderService {
                         "Shipment order with the provided ID: " + id + " doesn't exist."
                 ));
 
-        shipmentOrder.setStatus(request.getStatus());
+        ShipmentOrderStatus current = shipmentOrder.getStatus();
+        ShipmentOrderStatus next = request.getStatus();
 
-        return shipmentOrderMapper.toResponse(
-                shipmentOrder,
-                shipmentOrder.getFreights().size()
-        );
+        if (current.canTransitionTo(next)){
+            shipmentOrder.setStatus(request.getStatus());
+
+            return shipmentOrderMapper.toResponse(
+                    shipmentOrder,
+                    freightRepository.countByShipmentOrderId(id)
+            );
+        }else{
+            List<String> allowed = current.allowedNext().stream().map(Enum::toString).toList();
+            throw new BusinessRuleViolationException("Cannot move order from "+ current + " to " + next, allowed);
+        }
+
+
     }
 
     @Transactional
@@ -186,7 +245,23 @@ public class ShipmentOrderService {
                         "Shipment order with the provided ID: " + id + " doesn't exist."
                 ));
 
+        if(!currentUserProvider.isOwnerOrStaff(shipmentOrder.getCustomer().getId())){
+            throw new ResourceNotFoundException("The shipment order with the provided ID:" + id + " doesn't exist");
+        }
+
+        ShipmentOrderStatus shipmentOrderStatus = shipmentOrder.getStatus();
+
+        if(!shipmentOrderStatus.canTransitionTo(ShipmentOrderStatus.CANCELLED)){
+            throw new BusinessRuleViolationException(
+                    "Cannot cancel an order in status " + shipmentOrderStatus,
+                    shipmentOrderStatus.allowedNext().stream().map(Enum::name).toList()
+            );
+        }
+
         shipmentOrder.setStatus(ShipmentOrderStatus.CANCELLED);
         shipmentOrderRepository.save(shipmentOrder);
     }
+
+
+
 }

@@ -155,7 +155,7 @@ public class ErrorController {
                 .status(HttpStatus.CONFLICT.value())
                 .error("Business rule violation")
                 .message(ex.getMessage())
-                .details(new ArrayList<>())
+                .details(ex.getDetails())
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);

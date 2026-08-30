@@ -1,6 +1,7 @@
 package com.zavrsniRad.LogisticsApp.domain.dto.shipment;
 
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,5 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateShipmentOrderStatus {
 
+    @NotNull
     private ShipmentOrderStatus status;
 }

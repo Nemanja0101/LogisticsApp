@@ -6,8 +6,11 @@ import com.zavrsniRad.LogisticsApp.domain.dto.company.PatchCompanyRequest;
 import com.zavrsniRad.LogisticsApp.domain.dto.company.SingleCompanyResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.CreateUpdateShipmentOrder;
 import com.zavrsniRad.LogisticsApp.domain.models.Company;
+import com.zavrsniRad.LogisticsApp.domain.models.User;
+import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.CompanyMapper;
+import com.zavrsniRad.LogisticsApp.mappers.UserMapper;
 import com.zavrsniRad.LogisticsApp.repositories.CompanyRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class CompanyService {
 
     private final CompanyMapper companyMapper;
     private final CompanyRepository companyRepository;
+    private final UserMapper userMapper;
 
     public List<CompanyResponse> getAllCompanies() {
 
@@ -52,10 +56,27 @@ public class CompanyService {
         return companyMapper.toSingleCompany(saved);
     }
 
+    @Transactional
     public void deleteCompany(UUID id) {
 
-        Company company = companyRepository.findById(id)
+        Company company = companyRepository.findByIdAndFetchMembers(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Company with the ID:" + id + " doesn't exist"));
+
+        if (!company.getMemberships().isEmpty()){
+            throw new BusinessRuleViolationException(
+                    "Company still has users associated with it",
+                    company.getMemberships()
+                            .stream()
+                            .map(
+                                    uc -> {
+                                        User u = uc.getUser();
+                                        return u.getFirstName() + " " + u.getLastName() + " <" + u.getEmail() + ">";
+                                    }
+                            )
+                            .toList()
+            );
+        }
+
 
         companyRepository.delete(company);
     }

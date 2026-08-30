@@ -43,15 +43,19 @@ public class SecurityConfig {
 
         http.
                 authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/v1/test").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                        .requestMatchers( "/error").permitAll()
+                        .requestMatchers(                   "/api/v1/test").permitAll()
+                        .requestMatchers(HttpMethod.POST,   "/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,    "/api/v1/locations/**").authenticated()
+                        .requestMatchers(                   "/api/v1/locations/**").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers(HttpMethod.GET,    "/api/v1/companies/**").authenticated()
+                        .requestMatchers(                   "/api/v1/companies/**").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers(                   "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
-                        session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         ;

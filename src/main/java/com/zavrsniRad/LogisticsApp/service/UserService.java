@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -110,7 +111,7 @@ public class UserService {
         if (userToUpdate.getRole() == UserRole.ADMIN
                 && updateRoleRequest.getUserRole() != UserRole.ADMIN
                 && userRepository.countByRoleAndDeactivatedAtIsNull(UserRole.ADMIN) <= 1) {
-            throw new BusinessRuleViolationException("Can't demote the last remaining admin");
+            throw new BusinessRuleViolationException("Can't demote the last remaining admin", new ArrayList<>());
         }
 
         if (updateRoleRequest.getUserRole() != null){
@@ -129,7 +130,7 @@ public class UserService {
 
         if (currentUser.getRole() == UserRole.ADMIN
                 && userRepository.countByRoleAndDeactivatedAtIsNull(UserRole.ADMIN) <= 1) {
-            throw new BusinessRuleViolationException("Can't deactivate the last remaining admin");
+            throw new BusinessRuleViolationException("Can't deactivate the last remaining admin", new ArrayList<>());
         }
         currentUser.setDeactivatedAt(LocalDateTime.now());
         User saved = userRepository.save(currentUser);
@@ -145,7 +146,7 @@ public class UserService {
 
         if (user.getRole() == UserRole.ADMIN
                 && userRepository.countByRoleAndDeactivatedAtIsNull(UserRole.ADMIN) <= 1) {
-            throw new BusinessRuleViolationException("Can't deactivate the last remaining admin");
+            throw new BusinessRuleViolationException("Can't deactivate the last remaining admin", new ArrayList<>());
         }
 
         user.setDeactivatedAt(LocalDateTime.now());

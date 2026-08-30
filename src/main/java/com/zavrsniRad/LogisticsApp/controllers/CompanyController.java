@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,6 @@ import java.util.UUID;
 public class CompanyController {
 
     public final CompanyService companyService;
-
 
     @GetMapping
     public ResponseEntity<List<CompanyResponse>> getAllCompanies() {
@@ -50,7 +50,6 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
     @PatchMapping("/{id}")
     public ResponseEntity<SingleCompanyResponse> patchCompany(
             @PathVariable UUID id,
@@ -59,7 +58,6 @@ public class CompanyController {
         SingleCompanyResponse response = companyService.patchCompany(patchRequest, id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCompany(@PathVariable UUID id) {
