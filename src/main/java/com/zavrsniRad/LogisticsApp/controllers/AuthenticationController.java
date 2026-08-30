@@ -132,7 +132,7 @@ public class AuthenticationController {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(secureCookie) //meaning it can go over http too
-                .path("/")
+                .path("/api/v1/auth")
                 .maxAge(7 * 24 * 60 * 60) //7 days
                 .sameSite("Lax")
                 .build();

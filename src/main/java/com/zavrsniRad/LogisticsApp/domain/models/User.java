@@ -23,7 +23,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+//    unique je dodat kroz parcijelni index-unique
+    @Column(nullable = false)
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -43,6 +44,10 @@ public class User {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "deactivated_at")
+    @Builder.Default
+    private LocalDateTime deactivatedAt = null;
 
     @PrePersist
     protected void onCreate() { this.createdAt = LocalDateTime.now(); }

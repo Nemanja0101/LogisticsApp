@@ -41,7 +41,7 @@ public class AuthenticationService {
 
     public UserDetails authenticate(String email, String password){
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndDeactivatedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if(!passwordEncoder.matches(password, user.getPassword())){
@@ -99,7 +99,7 @@ public class AuthenticationService {
 
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userRepository.existsByEmailAndDeactivatedAtIsNull(signUpRequest.getEmail())) {
             throw new UserAlreadyExistsException("Email already in use with a different account");
         }
 
@@ -108,7 +108,7 @@ public class AuthenticationService {
                 .firstName(signUpRequest.getFirstName())
                 .lastName(signUpRequest.getLastName())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                .role(UserRole.ADMIN)  // <--- to change later
+                .role(UserRole.CUSTOMER)
                 .build();
 
         User savedUser = userRepository.save(user);

@@ -16,7 +16,7 @@ public class LogisticsUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user =userRepository.findByEmail(email)
+        User user =userRepository.findByEmailAndDeactivatedAtIsNull(email)
                 .orElseThrow(()->new UsernameNotFoundException("User not found with email: " + email));
 
         return new LogisticsUserDetails(user);

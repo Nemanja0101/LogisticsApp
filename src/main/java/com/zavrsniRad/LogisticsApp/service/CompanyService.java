@@ -34,6 +34,7 @@ public class CompanyService {
 
     }
 
+    @Transactional
     public SingleCompanyResponse getCompany(UUID id) {
 
         Company company = companyRepository.findById(id)
