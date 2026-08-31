@@ -1,6 +1,6 @@
 package com.zavrsniRad.LogisticsApp.controllers.shipment;
 
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.AssignFreight;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.AssignFreight;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentResponse;
 import com.zavrsniRad.LogisticsApp.service.ShipmentService;

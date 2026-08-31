@@ -42,7 +42,7 @@ CREATE TABLE freights
 CREATE TABLE shipment_segments
 (
     id                UUID PRIMARY KEY,
-    shipment_id       UUID NOT NULL references shipments (id),
+    shipment_id       UUID NOT NULL references shipments (id) ON DELETE CASCADE,
     sequence_number   SMALLINT NOT NULL,
     start_location_id UUID NOT NULL references locations (id),
     end_location_id   UUID NOT NULL references locations (id),
