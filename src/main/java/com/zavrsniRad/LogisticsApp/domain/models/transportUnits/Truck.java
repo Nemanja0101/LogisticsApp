@@ -1,10 +1,8 @@
 package com.zavrsniRad.LogisticsApp.domain.models.transportUnits;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.zavrsniRad.LogisticsApp.domain.enums.TrailerType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +17,13 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Truck extends TransportUnit{
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trailer_type", nullable = false)
+    private TrailerType trailerType;
+
+    @Column(name = "axle_count", nullable = false)
+    private Integer axleCount;
+
     @Column(name = "license_plate", nullable = false)
     private String licensePlate;
 
@@ -27,5 +32,12 @@ public class Truck extends TransportUnit{
 
     @Column(name = "cargo_volume_m3", nullable = false)
     private Double cargoVolumeM3;
+
+    @Column(nullable = false)
+    private String manufacturer;
+
+    @Column(nullable = false)
+    private String model;
+
 
 }

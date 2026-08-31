@@ -1,5 +1,6 @@
 package com.zavrsniRad.LogisticsApp.domain.models.shipment;
 
+import com.zavrsniRad.LogisticsApp.domain.models.transportUnits.TransportUnit;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,11 +28,9 @@ public class ShipmentSegment {
     @Column(name = "sequence_number", nullable = false)
     private Short sequenceNumber;
 
-
-    //TODO: implement a Transport Unit class
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private TransportMode transportMode; // TRUCK, SHIP, RAIL, AIR
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transport_unit_id", nullable = false)
+    private TransportUnit transportUnit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "start_location_id", nullable = false)

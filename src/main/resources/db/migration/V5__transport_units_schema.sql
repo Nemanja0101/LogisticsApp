@@ -1,18 +1,20 @@
 CREATE TABLE transport_units
 (
     id             UUID PRIMARY KEY,
-    created_at     TIMESTAMP NOT NULL,
-    manufacturer   VARCHAR(255),
-    model          VARCHAR(255),
+    created_at     TIMESTAMP   NOT NULL,
     transport_type VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE trucks
 (
-    id               UUID PRIMARY KEY,
-    license_plate    VARCHAR(255) NOT NULL,
-    max_weight_kg    INTEGER NOT NULL,
-    cargo_volume_m3  DOUBLE PRECISION NOT NULL,
+    id              UUID PRIMARY KEY,
+    trailer_type    VARCHAR(40)      NOT NULL,
+    axle_count      INTEGER NOT NULL,
+    manufacturer    VARCHAR(255) NOT NULL,
+    model           VARCHAR(255) NOT NULL,
+    license_plate   VARCHAR(255)     NOT NULL,
+    max_weight_kg   INTEGER          NOT NULL,
+    cargo_volume_m3 DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT fk_trucks_transport_unit
         FOREIGN KEY (id)
@@ -21,10 +23,12 @@ CREATE TABLE trucks
 
 CREATE TABLE vans
 (
-    id               UUID PRIMARY KEY,
-    license_plate    VARCHAR(255) NOT NULL,
-    max_weight_kg    INTEGER NOT NULL,
-    cargo_volume_m3  DOUBLE PRECISION NOT NULL,
+    id              UUID PRIMARY KEY,
+    manufacturer    VARCHAR(255) NOT NULL,
+    model           VARCHAR(255) NOT NULL,
+    license_plate   VARCHAR(255)     NOT NULL,
+    max_weight_kg   INTEGER          NOT NULL,
+    cargo_volume_m3 DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT fk_vans_transport_unit
         FOREIGN KEY (id)
@@ -45,9 +49,9 @@ CREATE TABLE vessels
 
 CREATE TABLE railcars
 (
-    id            UUID PRIMARY KEY,
-    wagon_number  VARCHAR(255) NOT NULL UNIQUE,
-    operated_by   VARCHAR(255) NOT NULL,
+    id           UUID PRIMARY KEY,
+    wagon_number VARCHAR(255) NOT NULL UNIQUE,
+    operated_by  VARCHAR(255) NOT NULL,
 
     CONSTRAINT fk_railcars_transport_unit
         FOREIGN KEY (id)

@@ -28,24 +28,16 @@ CREATE TABLE shipments
 CREATE TABLE freights
 (
     id                UUID PRIMARY KEY,
-    name              VARCHAR(255) NOT NULL,
+    form              VARCHAR(40)      NOT NULL,
+    name              VARCHAR(255)     NOT NULL,
     description       TEXT,
     weight_kg         DOUBLE PRECISION NOT NULL,
     length_cm         DOUBLE PRECISION NOT NULL,
     width_cm          DOUBLE PRECISION NOT NULL,
     height_cm         DOUBLE PRECISION NOT NULL,
-    shipment_order_id UUID         NOT NULL references shipment_orders (id),
+    shipment_order_id UUID             NOT NULL references shipment_orders (id),
     shipment_id       UUID references shipments (id),
-    created_at        TIMESTAMP    NOT NULL DEFAULT now()
+    created_at        TIMESTAMP        NOT NULL DEFAULT now()
 );
 
-CREATE TABLE shipment_segments
-(
-    id                UUID PRIMARY KEY,
-    shipment_id       UUID NOT NULL references shipments (id) ON DELETE CASCADE,
-    sequence_number   SMALLINT NOT NULL,
-    start_location_id UUID NOT NULL references locations (id),
-    end_location_id   UUID NOT NULL references locations (id),
-    created_at        TIMESTAMP    NOT NULL DEFAULT now()
-);
 
