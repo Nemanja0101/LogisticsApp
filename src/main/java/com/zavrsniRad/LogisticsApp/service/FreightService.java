@@ -106,6 +106,8 @@ public class FreightService {
         assertFreightEditable(freight.getShipmentOrder());
 
         freight.setName(updateFreightRequest.getName());
+        freight.setForm(updateFreightRequest.getForm());
+        freight.setRequirements(updateFreightRequest.getRequirements());
         freight.setDescription(updateFreightRequest.getDescription());
         freight.setWeightKg(updateFreightRequest.getWeightKg());
         freight.setLengthCm(updateFreightRequest.getLengthCm());
@@ -127,6 +129,14 @@ public class FreightService {
 
         if (patchFreightRequest.getName() != null){
             freight.setName(patchFreightRequest.getName());
+        }
+
+        if (patchFreightRequest.getForm() != null){
+            freight.setForm(patchFreightRequest.getForm());
+        }
+
+        if (patchFreightRequest.getRequirements() != null){
+            freight.setRequirements(patchFreightRequest.getRequirements());
         }
 
         if (patchFreightRequest.getDescription() != null){
