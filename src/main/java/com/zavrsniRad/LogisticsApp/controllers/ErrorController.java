@@ -7,6 +7,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.UserAlreadyExistsException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -160,6 +162,30 @@ public class ErrorController {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
 
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<CustomErrorResponse> handleUnreadable(HttpMessageNotReadableException ex) {
+
+        List<String> details = new ArrayList<>();
+        String message = "Request body could not be read";
+
+        if (ex.getCause() instanceof InvalidFormatException ife && ife.getTargetType().isEnum()) {
+            message = "Invalid value '" + ife.getValue() + "' for " + ife.getTargetType().getSimpleName();
+            for (Object constant : ife.getTargetType().getEnumConstants()) {
+                details.add(constant.toString());
+            }
+        }
+
+        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Malformed request")
+                .message(message)
+                .details(details)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 

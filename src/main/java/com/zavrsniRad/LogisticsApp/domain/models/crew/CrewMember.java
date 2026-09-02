@@ -25,8 +25,8 @@ public class CrewMember {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-//    @Embedded
-//    private License license;
+    @Embedded
+    private License license;
 //
 //    @OneToMany(mappedBy = "crewMember")
 //    private List<CrewAssignment> assignments;

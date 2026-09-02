@@ -1,8 +1,10 @@
 package com.zavrsniRad.LogisticsApp.controllers.shipment;
 
 
+import com.zavrsniRad.LogisticsApp.domain.dto.crew.CrewAssignmentResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.segment.CreateUpdateShipmentSegment;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.segment.ShipmentSegmentResponse;
+import com.zavrsniRad.LogisticsApp.service.CrewAssignmentService;
 import com.zavrsniRad.LogisticsApp.service.ShipmentSegmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import java.util.UUID;
 public class ShipmentSegmentController {
 
     private final ShipmentSegmentService shipmentSegmentService;
+    private final CrewAssignmentService crewAssignmentService;
 
 
     @GetMapping
@@ -49,6 +52,18 @@ public class ShipmentSegmentController {
 
         ShipmentSegmentResponse segment = shipmentSegmentService.getShipmentSegment(shipmentId, id);
         return ResponseEntity.status(HttpStatus.OK).body(segment);
+
+    }
+
+
+    @GetMapping(path = "/{id}/crew")
+    public ResponseEntity<List<CrewAssignmentResponse>> getCrewOnSegment(
+            @PathVariable UUID shipmentId,
+            @PathVariable UUID id
+    ){
+
+        List<CrewAssignmentResponse> assignments = crewAssignmentService.getAssignmentsForSegment(shipmentId, id);
+        return ResponseEntity.status(HttpStatus.OK).body(assignments);
 
     }
 

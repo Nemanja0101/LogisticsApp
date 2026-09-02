@@ -3,7 +3,10 @@ package com.zavrsniRad.LogisticsApp.service;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.AssignFreight;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
+import com.zavrsniRad.LogisticsApp.domain.enums.Capability;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
+import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewAssignment;
+import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewMember;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Shipment;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
@@ -12,6 +15,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.FreightMapper;
 import com.zavrsniRad.LogisticsApp.mappers.ShipmentMapper;
+import com.zavrsniRad.LogisticsApp.repositories.CrewAssignmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
@@ -38,6 +42,7 @@ public class ShipmentService {
     private final FreightRepository freightRepository;
     private final FreightMapper freightMapper;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final CrewAssignmentRepository crewAssignmentRepository;
     private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     @Transactional
@@ -111,7 +116,21 @@ public class ShipmentService {
             transportCompatibilityChecker.assertUnitCanCarry(segment.getTransportUnit(), List.of(freight));
         }
 
+        List<UUID> segmentIds = segments.stream().map(ShipmentSegment::getId).toList();
+
+        if (!segmentIds.isEmpty()) {
+
+            for (CrewAssignment assignment : crewAssignmentRepository.findAllByShipmentSegmentIdIn(segmentIds)) {
+                transportCompatibilityChecker.assertCrewMemberIsAdrCertified(
+                        assignment.getCrewMember().getLicense(),
+                        List.of(freight)
+                );
+            }
+
+        }
+
         assertFreightAssignable(freight.getShipmentOrder());
+
 
         freight.setShipment(shipment);
         freightRepository.save(freight);
