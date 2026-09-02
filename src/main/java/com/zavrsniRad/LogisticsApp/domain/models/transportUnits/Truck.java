@@ -2,6 +2,7 @@ package com.zavrsniRad.LogisticsApp.domain.models.transportUnits;
 
 
 import com.zavrsniRad.LogisticsApp.domain.enums.TrailerType;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,4 +41,8 @@ public class Truck extends TransportUnit{
     private String model;
 
 
+    @Override
+    public TransportUnitType getType() {
+        return TransportUnitType.TRUCK;
+    }
 }

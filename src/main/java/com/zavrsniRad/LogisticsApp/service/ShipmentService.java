@@ -7,12 +7,14 @@ import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Shipment;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentSegment;
 import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.FreightMapper;
 import com.zavrsniRad.LogisticsApp.mappers.ShipmentMapper;
 import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentRepository;
+import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,8 @@ public class ShipmentService {
     private final ShipmentMapper shipmentMapper;
     private final FreightRepository freightRepository;
     private final FreightMapper freightMapper;
+    private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     @Transactional
     public List<ShipmentResponse> getAllShipments() {
@@ -89,8 +93,6 @@ public class ShipmentService {
     @Transactional
     public ShipmentResponse assignFreightToShipment(UUID id, AssignFreight assignFreightRequest) {
 
-        //check if freights exists
-        //check if shipment exists
         Freight freight = freightRepository.findByIdWithShipmentOrder(assignFreightRequest.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Freight with ID:" + assignFreightRequest.getId() + " doesn't exist"));
 
@@ -100,12 +102,16 @@ public class ShipmentService {
                     new ArrayList<>()
             );
         }
-
-//        if i try to assign freight but the shipment is actually in progress, it shouldn't be allowed
-        assertFreightAssignable(freight.getShipmentOrder());
-
         Shipment shipment = shipmentRepository.findByIdAndFetchFreights(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Shipment with ID:" + id + " doesn't exist"));
+
+        List<ShipmentSegment> segments = shipmentSegmentRepository.findAllByShipmentId(id);
+
+        for (ShipmentSegment segment : segments) {
+            transportCompatibilityChecker.assertUnitCanCarry(segment.getTransportUnit(), List.of(freight));
+        }
+
+        assertFreightAssignable(freight.getShipmentOrder());
 
         freight.setShipment(shipment);
         freightRepository.save(freight);

@@ -1,5 +1,6 @@
 package com.zavrsniRad.LogisticsApp.domain.models.transportUnits;
 
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -24,4 +25,9 @@ public class Railcar extends TransportUnit{
 
     @Column(name = "operated_by", nullable = false)
     private String operatedBy;
+
+    @Override
+    public TransportUnitType getType() {
+        return TransportUnitType.RAILCAR;
+    }
 }

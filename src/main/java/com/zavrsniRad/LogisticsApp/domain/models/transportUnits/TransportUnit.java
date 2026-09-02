@@ -2,6 +2,7 @@ package com.zavrsniRad.LogisticsApp.domain.models.transportUnits;
 
 
 import com.zavrsniRad.LogisticsApp.domain.enums.Capability;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +44,8 @@ public abstract class TransportUnit {
 
     @PrePersist
     protected void onCreate() { this.createdAt = LocalDateTime.now(); }
+
+    public abstract TransportUnitType getType();
 
 }
 
