@@ -2,6 +2,7 @@ package com.zavrsniRad.LogisticsApp.service;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.segment.CreateUpdateShipmentSegment;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.segment.ShipmentSegmentResponse;
+import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewAssignment;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Location;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Shipment;
@@ -22,6 +23,7 @@ import java.util.*;
 public class ShipmentSegmentService {
 
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final CrewAssignmentRepository crewAssignmentRepository;
     private final TransportCompatibilityChecker transportCompatibilityChecker;
     private final ShipmentRepository shipmentRepository;
     private final ShipmentSegmentMapper shipmentSegmentMapper;
@@ -250,6 +252,19 @@ public class ShipmentSegmentService {
 
         if (next.isPresent()){
             throw new BusinessRuleViolationException("You can't delete a shipment segment in the middle of shipment, as it breaks the contiguity, rather try updating a whole segment", new ArrayList<>());
+        }
+
+        List<CrewAssignment> assignments = crewAssignmentRepository.findAllByShipmentSegmentId(id);
+
+        if (!assignments.isEmpty()){
+            throw new BusinessRuleViolationException(
+                    "You must unassign all crew from this segment before deleting it",
+                    assignments.stream()
+                            .map(assignment -> assignment.getCrewMember().getUser().getFirstName() + " "
+                                    + assignment.getCrewMember().getUser().getLastName()
+                                    + " (" + assignment.getCrewMember().getId() + ")")
+                            .toList()
+            );
         }
 
         shipmentSegmentRepository.delete(current);

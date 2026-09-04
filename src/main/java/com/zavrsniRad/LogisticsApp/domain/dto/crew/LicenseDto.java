@@ -30,6 +30,7 @@ public class LicenseDto {
     @NotNull
     private LocalDate expiresAt;
 
-    private boolean adrCertified;
+    @Builder.Default
+    private Boolean adrCertified = false;
 
 }
