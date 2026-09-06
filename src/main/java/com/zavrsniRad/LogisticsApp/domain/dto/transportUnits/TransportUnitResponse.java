@@ -14,7 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class TransportUnitResponse {
-//TODO:: should it only expose these?
     private UUID id;
     private TransportUnitType type;
     private String identifier;

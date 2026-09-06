@@ -39,12 +39,6 @@ public class ShipmentOrder {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-//  cascade acts on the side it's created, meaning
-//  whatever happens on my side (ShipmentOrder) cascade to the objects
-//  in my collections, in this case, if i save myself, persist the objects
-//  in the list to the DB also.
-
-//    DECLARE FETCH TYPE EAGER HERE IF THE FREIGHTS ARE NOT BEING SAVED/FETCHED CORRECTLY.
     @OneToMany(mappedBy = "shipmentOrder",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default

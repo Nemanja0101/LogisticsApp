@@ -24,7 +24,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-//    unique je dodat kroz parcijelni index-unique
     @Column(nullable = false)
     private String email;
 

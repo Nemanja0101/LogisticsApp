@@ -2,6 +2,7 @@ package com.zavrsniRad.LogisticsApp.domain.models.shipment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Shipment {
     private UUID id;
 
     @OneToMany(mappedBy = "shipment")
+    @BatchSize(size = 100)
     @Builder.Default
     private List<Freight> freights = new ArrayList<>();
 

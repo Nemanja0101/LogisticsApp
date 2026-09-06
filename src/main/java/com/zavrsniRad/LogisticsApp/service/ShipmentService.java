@@ -3,10 +3,8 @@ package com.zavrsniRad.LogisticsApp.service;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.ShipmentResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.AssignFreight;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
-import com.zavrsniRad.LogisticsApp.domain.enums.Capability;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
 import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewAssignment;
-import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewMember;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Shipment;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
@@ -20,6 +18,8 @@ import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +36,6 @@ public class ShipmentService {
             ShipmentOrderStatus.ON_HOLD
     );
 
-    //only admins and dispetchers can access this service via controller guard
     private final ShipmentRepository shipmentRepository;
     private final ShipmentMapper shipmentMapper;
     private final FreightRepository freightRepository;
@@ -46,9 +45,10 @@ public class ShipmentService {
     private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     @Transactional
-    public List<ShipmentResponse> getAllShipments() {
-        List<Shipment> allShipments = shipmentRepository.findAllWithFreights();
-        return allShipments.stream().map(shipmentMapper::toResponse).toList();
+    public Page<ShipmentResponse> getAllShipments(Pageable pageable) {
+
+        return shipmentRepository.findAll(pageable).map(shipmentMapper::toResponse);
+
     }
 
     @Transactional
@@ -66,9 +66,6 @@ public class ShipmentService {
 
     @Transactional
     public void deleteShipment(UUID id) {
-
-//            if shipment has freight
-//        you cant delete
 
         Shipment shipment = shipmentRepository.findByIdAndFetchFreightsAndShipmentOrder(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Couldn't find shipment with ID:" + id));

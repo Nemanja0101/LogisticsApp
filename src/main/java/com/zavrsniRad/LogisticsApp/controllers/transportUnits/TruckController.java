@@ -5,19 +5,15 @@ import com.zavrsniRad.LogisticsApp.domain.dto.transportUnits.TruckResponse;
 import com.zavrsniRad.LogisticsApp.service.TruckService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,10 +26,11 @@ public class TruckController {
 
 
     @GetMapping
-    public ResponseEntity<List<TruckResponse>> getAllTrucks(){
+    public ResponseEntity<Page<TruckResponse>> getAllTrucks(
+            @PageableDefault(sort = {"createdAt", "id"}, direction = Sort.Direction.DESC) Pageable pageable
+    ){
 
-        List<TruckResponse> trucks = truckService.getAllTrucks();
-        return ResponseEntity.status(HttpStatus.OK).body(trucks);
+        return ResponseEntity.status(HttpStatus.OK).body(truckService.getAllTrucks(pageable));
 
     }
 

@@ -1,8 +1,8 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.location.CreateUpdateLocation;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.LocationResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.location.PatchLocation;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.LocationResponse;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Location;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.LocationMapper;

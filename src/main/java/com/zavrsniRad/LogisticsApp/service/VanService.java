@@ -9,6 +9,8 @@ import com.zavrsniRad.LogisticsApp.mappers.VanMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.VanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,9 @@ public class VanService {
     private final VanRepository vanRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
 
-    public List<VanResponse> getAllVans() {
+    public Page<VanResponse> getAllVans(Pageable pageable) {
 
-        List<Van> allVans = vanRepository.findAll();
-
-        return allVans.stream().map(vanMapper::toResponse).toList();
+        return vanRepository.findAll(pageable).map(vanMapper::toResponse);
 
     }
 

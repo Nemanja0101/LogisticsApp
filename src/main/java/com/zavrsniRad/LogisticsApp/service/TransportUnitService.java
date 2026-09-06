@@ -6,9 +6,10 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.TransportUnitMapper;
 import com.zavrsniRad.LogisticsApp.repositories.TransportUnitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,13 +19,9 @@ public class TransportUnitService {
     private final TransportUnitRepository transportUnitRepository;
     private final TransportUnitMapper transportUnitMapper;
 
-    public List<TransportUnitResponse> getAllTransportUnits() {
+    public Page<TransportUnitResponse> getAllTransportUnits(Pageable pageable) {
 
-
-        List<TransportUnit> allTransportUnits = transportUnitRepository.findAll();
-
-        return allTransportUnits.stream().map(transportUnitMapper::toResponse).toList();
-
+        return transportUnitRepository.findAll(pageable).map(transportUnitMapper::toResponse);
 
     }
 

@@ -17,11 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -107,7 +103,13 @@ public class FreightService {
 
         freight.setName(updateFreightRequest.getName());
         freight.setForm(updateFreightRequest.getForm());
-        freight.setRequirements(updateFreightRequest.getRequirements());
+
+        freight.getRequirements().clear();
+
+        if (updateFreightRequest.getRequirements() != null) {
+            freight.getRequirements().addAll(updateFreightRequest.getRequirements());
+        }
+
         freight.setDescription(updateFreightRequest.getDescription());
         freight.setWeightKg(updateFreightRequest.getWeightKg());
         freight.setLengthCm(updateFreightRequest.getLengthCm());
@@ -136,7 +138,8 @@ public class FreightService {
         }
 
         if (patchFreightRequest.getRequirements() != null){
-            freight.setRequirements(patchFreightRequest.getRequirements());
+            freight.getRequirements().clear();
+            freight.getRequirements().addAll(patchFreightRequest.getRequirements());
         }
 
         if (patchFreightRequest.getDescription() != null){

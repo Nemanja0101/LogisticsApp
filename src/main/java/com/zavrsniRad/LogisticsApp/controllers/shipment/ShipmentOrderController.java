@@ -12,6 +12,10 @@ import com.zavrsniRad.LogisticsApp.service.FreightService;
 import com.zavrsniRad.LogisticsApp.service.ShipmentOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,21 +34,21 @@ public class ShipmentOrderController {
 
 
     @GetMapping()
-    public ResponseEntity<List<ShipmentOrderResponse>> getAllMyShipmentOrders(){
+    public ResponseEntity<Page<ShipmentOrderResponse>> getAllMyShipmentOrders(
+            @PageableDefault(sort = {"createdAt", "id"}, direction = Sort.Direction.DESC) Pageable pageable
+    ){
 
-        List<ShipmentOrderResponse> allShipmentOrders = shipmentOrderService.getAllMyShipmentOrders();
-
-        return ResponseEntity.status(HttpStatus.OK).body(allShipmentOrders);
+        return ResponseEntity.status(HttpStatus.OK).body(shipmentOrderService.getAllMyShipmentOrders(pageable));
 
     }
 
     @GetMapping(path = "/admin")
     @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
-    public ResponseEntity<List<ShipmentOrderResponse>> getAllShipmentOrders(){
+    public ResponseEntity<Page<ShipmentOrderResponse>> getAllShipmentOrders(
+            @PageableDefault(sort = {"createdAt", "id"}, direction = Sort.Direction.DESC) Pageable pageable
+    ){
 
-        List<ShipmentOrderResponse> allShipmentOrders = shipmentOrderService.getAllShipmentOrders();
-
-        return ResponseEntity.status(HttpStatus.OK).body(allShipmentOrders);
+        return ResponseEntity.status(HttpStatus.OK).body(shipmentOrderService.getAllShipmentOrders(pageable));
 
     }
 
@@ -68,7 +72,6 @@ public class ShipmentOrderController {
     }
 
 
-// new methods
 
     @PutMapping("/{id}")
     public ResponseEntity<ShipmentOrderResponse> updateShipmentOrder(
@@ -120,7 +123,6 @@ public class ShipmentOrderController {
         return ResponseEntity.noContent().build();
     }
 
-//end of new methods
     @PostMapping(path = "/{orderId}/freights")
     public ResponseEntity<?> createFright(
             @PathVariable UUID orderId,

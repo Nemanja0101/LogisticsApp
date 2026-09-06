@@ -12,10 +12,11 @@ import com.zavrsniRad.LogisticsApp.mappers.CompanyMapper;
 import com.zavrsniRad.LogisticsApp.mappers.UserMapper;
 import com.zavrsniRad.LogisticsApp.repositories.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,13 +27,9 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final UserMapper userMapper;
 
-    public List<CompanyResponse> getAllCompanies() {
+    public Page<CompanyResponse> getAllCompanies(Pageable pageable) {
 
-        List<Company> allCompanies = companyRepository.findAll();
-
-        return allCompanies.stream()
-                .map(companyMapper::toResponse)
-                .toList();
+        return companyRepository.findAll(pageable).map(companyMapper::toResponse);
 
     }
 

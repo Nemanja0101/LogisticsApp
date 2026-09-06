@@ -24,7 +24,6 @@ public class ShipmentSegment {
     @JoinColumn(name = "shipment_id", nullable = false)
     private Shipment shipment;
 
-    //koji je po redu u ruti
     @Column(name = "sequence_number", nullable = false)
     private Short sequenceNumber;
 

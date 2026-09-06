@@ -13,6 +13,8 @@ import com.zavrsniRad.LogisticsApp.repositories.RefreshTokenRepository;
 import com.zavrsniRad.LogisticsApp.repositories.UserRepository;
 import com.zavrsniRad.LogisticsApp.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -49,14 +50,10 @@ public class UserService {
         return userMapper.toResponse(currentUserProvider.getCurrentUser());
     }
 
-    public List<UserResponse> getAllUsers() {
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
 
-        List<User> allUsers = userRepository.findAllByDeactivatedAtIsNull();
+        return userRepository.findAllByDeactivatedAtIsNull(pageable).map(userMapper::toResponse);
 
-        return allUsers
-                .stream()
-                .map(userMapper::toResponse)
-                .toList();
     }
 
     @Transactional
@@ -93,7 +90,6 @@ public class UserService {
 
         currentUser.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
 
-        //moze i samo revoke, ali radi i ovako
         refreshTokenRepository.deleteByUserId(currentUser.getId());
         userRepository.save(currentUser);
 
@@ -102,9 +98,6 @@ public class UserService {
     @Transactional
     public UserResponse updateUserRole(UUID id, UpdateUserRole updateRoleRequest) {
 
-        // ne bit trebalo da moze da se apdejture korisnik koji je deaktiviran
-        // jer jedini razlog zasto nije hard delete vec soft je cuvanje record-a
-        // i izbegavanje data integrity violation exception-a
         User userToUpdate = userRepository.findByIdAndDeactivatedAtIsNull(id)
                 .orElseThrow(()-> new ResourceNotFoundException("User with the ID:" + id + " doesn't exist"));
 

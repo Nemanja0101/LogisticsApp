@@ -2,8 +2,8 @@ package com.zavrsniRad.LogisticsApp.service;
 
 import com.zavrsniRad.LogisticsApp.domain.enums.Capability;
 import com.zavrsniRad.LogisticsApp.domain.enums.LicenseType;
-import com.zavrsniRad.LogisticsApp.domain.models.crew.License;
 import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
+import com.zavrsniRad.LogisticsApp.domain.models.crew.License;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentSegment;
 import com.zavrsniRad.LogisticsApp.domain.models.transportUnits.TransportUnit;

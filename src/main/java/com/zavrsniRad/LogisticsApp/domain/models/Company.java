@@ -26,7 +26,7 @@ public class Company {
     private String name;
 
     @Column(name = "registration_number", nullable = false, unique = true)
-    private String registrationNumber; // PIB u srbiji, string da bi podrzao sve zemlje
+    private String registrationNumber;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

@@ -1,16 +1,18 @@
 package com.zavrsniRad.LogisticsApp.controllers;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.user.*;
-import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,10 +25,11 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @PageableDefault(sort = {"createdAt", "id"}, direction = Sort.Direction.DESC) Pageable pageable
+    ){
 
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.status(HttpStatus.OK).body(users);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers(pageable));
 
     }
 

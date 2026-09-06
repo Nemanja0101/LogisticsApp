@@ -9,6 +9,8 @@ import com.zavrsniRad.LogisticsApp.mappers.RailcarMapper;
 import com.zavrsniRad.LogisticsApp.repositories.RailcarRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,9 @@ public class RailcarService {
     private final RailcarRepository railcarRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
 
-    public List<RailcarResponse> getAllRailcars() {
+    public Page<RailcarResponse> getAllRailcars(Pageable pageable) {
 
-        List<Railcar> allRailcars = railcarRepository.findAll();
-
-        return allRailcars.stream().map(railcarMapper::toResponse).toList();
+        return railcarRepository.findAll(pageable).map(railcarMapper::toResponse);
 
     }
 

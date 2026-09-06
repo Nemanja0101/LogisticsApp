@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// in order to avoid clashing with the in-built ErrorResponse class name it's named Custom;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

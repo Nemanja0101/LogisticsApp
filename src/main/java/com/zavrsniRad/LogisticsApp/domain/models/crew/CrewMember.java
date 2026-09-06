@@ -27,9 +27,6 @@ public class CrewMember {
 
     @Embedded
     private License license;
-//
-//    @OneToMany(mappedBy = "crewMember")
-//    private List<CrewAssignment> assignments;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

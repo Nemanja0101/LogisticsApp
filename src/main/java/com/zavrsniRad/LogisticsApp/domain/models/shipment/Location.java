@@ -18,7 +18,6 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-//    ako je neka gradjevina, tipa Aerodrom, luka itd..
     @Column(nullable = true)
     private String name;
 

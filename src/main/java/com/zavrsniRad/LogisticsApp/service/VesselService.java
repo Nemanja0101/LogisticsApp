@@ -9,6 +9,8 @@ import com.zavrsniRad.LogisticsApp.mappers.VesselMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.VesselRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,9 @@ public class VesselService {
     private final VesselRepository vesselRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
 
-    public List<VesselResponse> getAllVessels() {
+    public Page<VesselResponse> getAllVessels(Pageable pageable) {
 
-        List<Vessel> allVessels = vesselRepository.findAll();
-
-        return allVessels.stream().map(vesselMapper::toResponse).toList();
+        return vesselRepository.findAll(pageable).map(vesselMapper::toResponse);
 
     }
 

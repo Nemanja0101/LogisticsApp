@@ -17,10 +17,14 @@ import com.zavrsniRad.LogisticsApp.repositories.ShipmentOrderRepository;
 import com.zavrsniRad.LogisticsApp.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,74 +39,49 @@ public class ShipmentOrderService {
     private final LocationRepository locationRepository;
 
 
-//    ADMIN path
-    public List<ShipmentOrderResponse> getAllShipmentOrders(){
+    public Page<ShipmentOrderResponse> getAllShipmentOrders(Pageable pageable){
 
-        List<ShipmentOrder> orders = shipmentOrderRepository.findAllWithLocations();
+        Page<ShipmentOrder> orders = shipmentOrderRepository.findAll(pageable);
 
-        List<UUID> ordersList = orders
-                .stream()
-                .map(ShipmentOrder::getId)
-                .toList();
+        Map<UUID, Long> countsByOrderIds = freightCountsFor(orders.getContent());
 
-
-        List<Object[]> objects = freightRepository.countByShipmentOrderIds(ordersList);
-
-        log.info("PRINTING::");
-        log.info(objects.toString());
-        objects.forEach(object -> log.info(Arrays.toString(object)));
-
-        Map<UUID, Long> countsByOrderIds =
-                freightRepository.countByShipmentOrderIds(ordersList)
-                        .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        row -> (UUID) row[0],
-                                        row -> (Long) row[1]
-                                )
-                        );
-
-        return orders
-                .stream()
-                .map(order-> shipmentOrderMapper.toResponse(
-                        order,
-                        countsByOrderIds.getOrDefault(order.getId(), 0L)
-                ))
-                .toList();
-
+        return orders.map(order -> shipmentOrderMapper.toResponse(
+                order,
+                countsByOrderIds.getOrDefault(order.getId(), 0L)
+        ));
 
     }
 
     @Transactional
-    public List<ShipmentOrderResponse> getAllMyShipmentOrders() {
+    public Page<ShipmentOrderResponse> getAllMyShipmentOrders(Pageable pageable) {
 
         User currentUser = currentUserProvider.getCurrentUser();
 
-        List<ShipmentOrder> orders = shipmentOrderRepository.findAllByCustomerId(currentUser.getId());
+        Page<ShipmentOrder> orders = shipmentOrderRepository.findAllByCustomerId(currentUser.getId(), pageable);
 
-        List<UUID> ordersList = orders
+        Map<UUID, Long> countsByOrderIds = freightCountsFor(orders.getContent());
+
+        return orders.map(order -> shipmentOrderMapper.toResponse(
+                order,
+                countsByOrderIds.getOrDefault(order.getId(), 0L)
+        ));
+
+    }
+
+    private Map<UUID, Long> freightCountsFor(List<ShipmentOrder> orders) {
+
+        List<UUID> orderIds = orders.stream().map(ShipmentOrder::getId).toList();
+
+        if (orderIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return freightRepository.countByShipmentOrderIds(orderIds)
                 .stream()
-                .map(ShipmentOrder::getId)
-                .toList();
-
-        Map<UUID, Long> countsByOrderIds =
-                freightRepository.countByShipmentOrderIds(ordersList)
-                        .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        row -> (UUID) row[0],
-                                        row -> (Long) row[1]
-                                )
-                        );
-
-        return orders
-                .stream()
-                .map(order-> shipmentOrderMapper.toResponse(
-                        order,
-                        countsByOrderIds.getOrDefault(order.getId(), 0L)
-                ))
-                .toList();
-
+                .collect(Collectors.toMap(
+                        row -> (UUID) row[0],
+                        row -> (Long) row[1]
+                ));
     }
 
 
@@ -163,7 +142,6 @@ public class ShipmentOrderService {
         shipmentOrder.setStartLocation(startLocation);
         shipmentOrder.setEndLocation(endLocation);
 
-//        not needed, just a safeguard
         ShipmentOrder savedShipmentOrder= shipmentOrderRepository.save(shipmentOrder);
 
         return shipmentOrderMapper.toResponse(savedShipmentOrder, freightRepository.countByShipmentOrderId(id));
@@ -237,7 +215,6 @@ public class ShipmentOrderService {
     @Transactional
     public void deleteShipmentOrder(UUID id) {
 
-//        soft delete:
 
         ShipmentOrder shipmentOrder = shipmentOrderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(

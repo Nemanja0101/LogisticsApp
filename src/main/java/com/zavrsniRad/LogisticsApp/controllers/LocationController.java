@@ -3,7 +3,7 @@ package com.zavrsniRad.LogisticsApp.controllers;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.location.CreateUpdateLocation;
 import com.zavrsniRad.LogisticsApp.domain.dto.location.PatchLocation;
-import com.zavrsniRad.LogisticsApp.domain.dto.shipment.*;
+import com.zavrsniRad.LogisticsApp.domain.dto.shipment.LocationResponse;
 import com.zavrsniRad.LogisticsApp.service.LocationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

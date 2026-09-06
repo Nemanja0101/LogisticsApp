@@ -12,13 +12,13 @@ import com.zavrsniRad.LogisticsApp.mappers.LicenseMapper;
 import com.zavrsniRad.LogisticsApp.repositories.CrewAssignmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.CrewMemberRepository;
 import com.zavrsniRad.LogisticsApp.repositories.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,10 +31,9 @@ public class CrewMemberService {
     private final LicenseMapper licenseMapper;
     private final UserRepository userRepository;
 
-    public List<CrewMemberResponse> getAllCrewMembers() {
+    public Page<CrewMemberResponse> getAllCrewMembers(Pageable pageable) {
 
-        List<CrewMember> crewMembers = crewMemberRepository.findAll();
-        return crewMembers.stream().map(crewMemberMapper::toResponse).toList();
+        return crewMemberRepository.findAll(pageable).map(crewMemberMapper::toResponse);
 
     }
 

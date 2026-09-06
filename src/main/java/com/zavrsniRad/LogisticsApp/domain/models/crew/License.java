@@ -22,7 +22,7 @@ public class License {
 
     @Column(name = "license_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private LicenseType licenseType; // e.g. "CDL-A", "Maritime Officer", etc.
+    private LicenseType licenseType;
 
     @Column(name = "issued_at", nullable = false)
     private LocalDate issuedAt;

@@ -9,6 +9,8 @@ import com.zavrsniRad.LogisticsApp.mappers.TruckMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.TruckRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +26,9 @@ public class TruckService {
     private final TruckRepository truckRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
 
-    public List<TruckResponse> getAllTrucks() {
+    public Page<TruckResponse> getAllTrucks(Pageable pageable) {
 
-        List<Truck> allTrucks = truckRepository.findAll();
-
-        return allTrucks.stream().map(truckMapper::toResponse).toList();
+        return truckRepository.findAll(pageable).map(truckMapper::toResponse);
 
     }
 

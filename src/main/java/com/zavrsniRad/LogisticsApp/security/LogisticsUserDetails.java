@@ -1,6 +1,5 @@
 package com.zavrsniRad.LogisticsApp.security;
 
-import com.zavrsniRad.LogisticsApp.domain.enums.UserRole;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +33,6 @@ public class LogisticsUserDetails implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
-
-//      TODO: authorization
 
     @Override
     public boolean isAccountNonExpired() {

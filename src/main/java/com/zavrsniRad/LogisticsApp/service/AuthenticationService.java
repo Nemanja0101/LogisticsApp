@@ -1,9 +1,9 @@
 package com.zavrsniRad.LogisticsApp.service;
 
 
-import com.zavrsniRad.LogisticsApp.domain.enums.UserRole;
 import com.zavrsniRad.LogisticsApp.domain.dto.SignUpRequest;
 import com.zavrsniRad.LogisticsApp.domain.dto.SignUpResponse;
+import com.zavrsniRad.LogisticsApp.domain.enums.UserRole;
 import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.exceptions.UserAlreadyExistsException;
 import com.zavrsniRad.LogisticsApp.repositories.UserRepository;
@@ -71,8 +71,6 @@ public class AuthenticationService {
 
     private Claims extractAllClaims(String token){
 
-//      parser throws an unchecked ExpiredJwtException from parseSignedClaims
-//      so this can also be used to validate for expiry
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

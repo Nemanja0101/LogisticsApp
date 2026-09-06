@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public abstract class TransportUnit {
     private LocalDateTime createdAt;
 
     @ElementCollection(fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     @CollectionTable(
             name = "transport_unit_capabilities",
             joinColumns = @JoinColumn(name = "transport_unit_id")

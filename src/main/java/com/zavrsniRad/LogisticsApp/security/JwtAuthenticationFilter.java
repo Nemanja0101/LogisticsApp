@@ -11,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,18 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
 
-//        String path = request.getServletPath();
-//        if (path.startsWith("/api/v1/auth")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
         String token = extractToken(request);
 
         if (token!=null && SecurityContextHolder.getContext().getAuthentication() == null){
 
             try{
-//              //validira i signature i datum isteka
                 String username = authenticationService.extractUsername(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -80,7 +72,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        //  Fallback to Authorization header
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);

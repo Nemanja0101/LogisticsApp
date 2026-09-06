@@ -10,7 +10,6 @@ import com.zavrsniRad.LogisticsApp.domain.models.User;
 import com.zavrsniRad.LogisticsApp.security.LogisticsUserDetails;
 import com.zavrsniRad.LogisticsApp.service.AuthenticationService;
 import com.zavrsniRad.LogisticsApp.service.RefreshTokenService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -68,7 +66,6 @@ public class AuthenticationController {
 
         RefreshToken stored = refreshTokenService.validate(UserRefreshToken);
         User user = stored.getUser();
-//     if this doesnt throw, then rotate.
 
         refreshTokenService.revoke(stored);
         String newRefreshToken = refreshTokenService.generate(user);
@@ -91,7 +88,6 @@ public class AuthenticationController {
             try {
                 refreshTokenService.revoke(refreshTokenService.validate(UserRefreshToken));
             } catch (BadCredentialsException ignored) {
-                // already invalid/expired . nothing to revoke
             }
         }
 
@@ -131,7 +127,7 @@ public class AuthenticationController {
 
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(secureCookie) //meaning it can go over http too
+                .secure(secureCookie)
                 .path("/api/v1/auth")
                 .maxAge(7 * 24 * 60 * 60) //7 days
                 .sameSite("Lax")
@@ -143,7 +139,7 @@ public class AuthenticationController {
 
         return ResponseCookie.from("jwt", accessToken)
                 .httpOnly(true)
-                .secure(secureCookie) //meaning it can go over http too
+                .secure(secureCookie)
                 .path("/")
                 .maxAge(15 * 60) //15 minutes
                 .sameSite("Lax")

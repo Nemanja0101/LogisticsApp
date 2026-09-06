@@ -1,11 +1,7 @@
 package com.zavrsniRad.LogisticsApp.domain.dto.crew;
 
 import com.zavrsniRad.LogisticsApp.domain.dto.user.UserResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

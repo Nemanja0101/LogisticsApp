@@ -19,6 +19,4 @@ public interface ShipmentOrderMapper {
     @Mapping(target = "freightCount", source = "freightCount")
     ShipmentOrderResponse toResponse(ShipmentOrder shipmentOrder, long freightCount);
 
-    // there are no mappable fields
-//    ShipmentOrder toEntity(CreateShipmentOrder createShipmentOrder);
 }
