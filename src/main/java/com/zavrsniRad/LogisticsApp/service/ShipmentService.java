@@ -109,6 +109,8 @@ public class ShipmentService {
 
         List<ShipmentSegment> segments = shipmentSegmentRepository.findAllByShipmentId(id);
 
+        transportCompatibilityChecker.assertCapacity(segments, shipment.getFreights(), freight);
+
         for (ShipmentSegment segment : segments) {
             transportCompatibilityChecker.assertUnitCanCarry(segment.getTransportUnit(), List.of(freight));
         }
@@ -118,7 +120,7 @@ public class ShipmentService {
         if (!segmentIds.isEmpty()) {
 
             for (CrewAssignment assignment : crewAssignmentRepository.findAllByShipmentSegmentIdIn(segmentIds)) {
-                transportCompatibilityChecker.assertCrewMemberIsAdrCertified(
+                transportCompatibilityChecker.assertCrewMemberIsDangerousGoodsCertified(
                         assignment.getCrewMember().getLicense(),
                         List.of(freight)
                 );

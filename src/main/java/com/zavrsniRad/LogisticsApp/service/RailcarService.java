@@ -8,6 +8,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.RailcarMapper;
 import com.zavrsniRad.LogisticsApp.repositories.RailcarRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class RailcarService {
     private final RailcarMapper railcarMapper;
     private final RailcarRepository railcarRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     public Page<RailcarResponse> getAllRailcars(Pageable pageable) {
 
@@ -48,6 +50,8 @@ public class RailcarService {
                     new ArrayList<>(List.of(createRailcar.getWagonNumber())));
         }
 
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.RAILCAR, createRailcar.getCapabilities());
+
         Railcar railcar = railcarMapper.toRailcar(createRailcar);
         Railcar saved = railcarRepository.save(railcar);
 
@@ -68,6 +72,10 @@ public class RailcarService {
 
         railcar.setWagonNumber(updateRailcar.getWagonNumber());
         railcar.setOperatedBy(updateRailcar.getOperatedBy());
+        railcar.setMaxWeightKg(updateRailcar.getMaxWeightKg());
+        railcar.setCargoVolumeM3(updateRailcar.getCargoVolumeM3());
+
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.RAILCAR, updateRailcar.getCapabilities());
 
         railcar.getCapabilities().clear();
 

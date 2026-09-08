@@ -20,7 +20,7 @@ public class TruckResponse {
     private TrailerType trailerType;
     private Integer axleCount;
     private String licensePlate;
-    private Integer maxWeightKg;
+    private Double maxWeightKg;
     private Double cargoVolumeM3;
     private String manufacturer;
     private String model;

@@ -1,8 +1,10 @@
 CREATE TABLE transport_units
 (
-    id             UUID PRIMARY KEY,
-    created_at     TIMESTAMP   NOT NULL,
-    transport_type VARCHAR(20) NOT NULL
+    id              UUID PRIMARY KEY,
+    created_at      TIMESTAMP        NOT NULL,
+    transport_type  VARCHAR(20)      NOT NULL,
+    max_weight_kg   DOUBLE PRECISION NOT NULL,
+    cargo_volume_m3 DOUBLE PRECISION NOT NULL
 );
 
 CREATE TABLE trucks
@@ -12,9 +14,7 @@ CREATE TABLE trucks
     axle_count      INTEGER NOT NULL,
     manufacturer    VARCHAR(255) NOT NULL,
     model           VARCHAR(255) NOT NULL,
-    license_plate   VARCHAR(255)     NOT NULL,
-    max_weight_kg   INTEGER          NOT NULL,
-    cargo_volume_m3 DOUBLE PRECISION NOT NULL,
+    license_plate   VARCHAR(255) NOT NULL,
 
     CONSTRAINT fk_trucks_transport_unit
         FOREIGN KEY (id)
@@ -26,9 +26,7 @@ CREATE TABLE vans
     id              UUID PRIMARY KEY,
     manufacturer    VARCHAR(255) NOT NULL,
     model           VARCHAR(255) NOT NULL,
-    license_plate   VARCHAR(255)     NOT NULL,
-    max_weight_kg   INTEGER          NOT NULL,
-    cargo_volume_m3 DOUBLE PRECISION NOT NULL,
+    license_plate   VARCHAR(255) NOT NULL,
 
     CONSTRAINT fk_vans_transport_unit
         FOREIGN KEY (id)
@@ -43,6 +41,21 @@ CREATE TABLE vessels
     operated_by      VARCHAR(255),
 
     CONSTRAINT fk_vessels_transport_unit
+        FOREIGN KEY (id)
+            REFERENCES transport_units (id)
+);
+
+
+CREATE TABLE aircraft
+(
+    id                  UUID PRIMARY KEY,
+    registration_number VARCHAR(255) NOT NULL UNIQUE,
+    manufacturer        VARCHAR(255) NOT NULL,
+    model               VARCHAR(255) NOT NULL,
+    max_range_km        INTEGER      NOT NULL,
+    operated_by         VARCHAR(255),
+
+    CONSTRAINT fk_aircraft_transport_unit
         FOREIGN KEY (id)
             REFERENCES transport_units (id)
 );

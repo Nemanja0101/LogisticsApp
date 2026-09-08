@@ -28,7 +28,7 @@ public class CreateUpdateTruck {
 
     @NotNull
     @Positive
-    private Integer maxWeightKg;
+    private Double maxWeightKg;
 
     @NotNull
     @Positive

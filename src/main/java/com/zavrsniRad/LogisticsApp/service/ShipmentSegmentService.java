@@ -141,6 +141,8 @@ public class ShipmentSegmentService {
                 .endLocation(endLocation)
                 .build();
 
+        transportCompatibilityChecker.assertCapacity(List.of(segment), shipment.getFreights());
+
         ShipmentSegment saved = shipmentSegmentRepository.save(segment);
 
         return shipmentSegmentMapper.toResponse(saved);
@@ -238,6 +240,14 @@ public class ShipmentSegmentService {
         current.setStartLocation(startLocation);
         current.setSequenceNumber(updateShipmentSegment.getSequenceNumber());
         current.setTransportUnit(transportUnit);
+
+        for (CrewAssignment assignment : crewAssignmentRepository.findAllByShipmentSegmentId(id)){
+            transportCompatibilityChecker.assertCrewMemberLicenseValidForSegmentTransportType(
+                    assignment.getCrewMember().getLicense().getLicenseType(), current
+            );
+        }
+
+        transportCompatibilityChecker.assertCapacity(List.of(current), shipment.getFreights());
 
         ShipmentSegment saved = shipmentSegmentRepository.save(current);
 

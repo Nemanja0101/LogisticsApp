@@ -30,7 +30,7 @@ public class License {
     @Column(name = "expires_at", nullable = false)
     private LocalDate expiresAt;
 
-    @Column(name = "adr_certified", nullable = false)
+    @Column(name = "dangerous_goods_certified", nullable = false)
     @Builder.Default
-    private boolean adrCertified = false;
+    private boolean dangerousGoodsCertified = false;
 }

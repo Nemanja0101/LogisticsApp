@@ -8,6 +8,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.VanMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.VanRepository;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class VanService {
     private final VanMapper vanMapper;
     private final VanRepository vanRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     public Page<VanResponse> getAllVans(Pageable pageable) {
 
@@ -47,6 +49,8 @@ public class VanService {
             throw new BusinessRuleViolationException("The van you're trying to create in the system, already has it's license plate registered to another van.",
                     new ArrayList<>(List.of(createVan.getLicensePlate())));
         }
+
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.VAN, createVan.getCapabilities());
 
         Van van = vanMapper.toVan(createVan);
         Van saved = vanRepository.save(van);
@@ -71,6 +75,8 @@ public class VanService {
         van.setCargoVolumeM3(updateVan.getCargoVolumeM3());
         van.setManufacturer(updateVan.getManufacturer());
         van.setModel(updateVan.getModel());
+
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.VAN, updateVan.getCapabilities());
 
         van.getCapabilities().clear();
 

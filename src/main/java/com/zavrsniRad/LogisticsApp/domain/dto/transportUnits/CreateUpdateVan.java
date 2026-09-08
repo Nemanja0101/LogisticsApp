@@ -20,7 +20,7 @@ public class CreateUpdateVan {
 
     @NotNull
     @Positive
-    private Integer maxWeightKg;
+    private Double maxWeightKg;
 
     @NotNull
     @Positive

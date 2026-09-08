@@ -8,6 +8,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.TruckMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.TruckRepository;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class TruckService {
     private final TruckMapper truckMapper;
     private final TruckRepository truckRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     public Page<TruckResponse> getAllTrucks(Pageable pageable) {
 
@@ -47,6 +49,8 @@ public class TruckService {
             throw new BusinessRuleViolationException("The truck you're trying to create in the system, already has it's license plate registered to another truck.",
                     new ArrayList<>(List.of(createTruck.getLicensePlate())));
         }
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.TRUCK, createTruck.getCapabilities());
+
         Truck truck = truckMapper.toEntity(createTruck);
         Truck saved = truckRepository.save(truck);
         return truckMapper.toResponse(saved);
@@ -70,6 +74,8 @@ public class TruckService {
         truck.setCargoVolumeM3(updateTruck.getCargoVolumeM3());
         truck.setManufacturer(updateTruck.getManufacturer());
         truck.setModel(updateTruck.getModel());
+
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.TRUCK, updateTruck.getCapabilities());
 
         truck.getCapabilities().clear();
 

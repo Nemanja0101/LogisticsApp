@@ -18,7 +18,7 @@ public class VanResponse {
     private LocalDateTime createdAt;
     private Set<Capability> capabilities;
     private String licensePlate;
-    private Integer maxWeightKg;
+    private Double maxWeightKg;
     private Double cargoVolumeM3;
     private String manufacturer;
     private String model;

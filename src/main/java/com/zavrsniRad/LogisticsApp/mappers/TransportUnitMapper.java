@@ -21,6 +21,7 @@ public interface TransportUnitMapper {
             case Van v -> v.getLicensePlate();
             case Vessel v  -> v.getImoNumber();
             case Railcar r -> r.getWagonNumber();
+            case Aircraft a -> a.getRegistrationNumber();
             default        -> null;
         };
 

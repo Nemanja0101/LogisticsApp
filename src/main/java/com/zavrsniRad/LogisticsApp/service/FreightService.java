@@ -5,13 +5,17 @@ import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.CreateFreight;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.FreightResponse;
 import com.zavrsniRad.LogisticsApp.domain.dto.shipment.freight.PatchFreight;
 import com.zavrsniRad.LogisticsApp.domain.enums.ShipmentOrderStatus;
+import com.zavrsniRad.LogisticsApp.domain.models.crew.CrewAssignment;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.Freight;
 import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentOrder;
+import com.zavrsniRad.LogisticsApp.domain.models.shipment.ShipmentSegment;
 import com.zavrsniRad.LogisticsApp.exceptions.BusinessRuleViolationException;
 import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.FreightMapper;
+import com.zavrsniRad.LogisticsApp.repositories.CrewAssignmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.FreightRepository;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentOrderRepository;
+import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.security.CurrentUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,9 @@ public class FreightService {
     private final ShipmentOrderRepository shipmentOrderRepository;
     private final FreightMapper freightMapper;
     private final CurrentUserProvider currentUserProvider;
+    private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final CrewAssignmentRepository crewAssignmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     public FreightResponse createFreight(CreateFreight request, UUID orderId) {
 
@@ -116,6 +123,8 @@ public class FreightService {
         freight.setWidthCm(updateFreightRequest.getWidthCm());
         freight.setHeightCm(updateFreightRequest.getHeightCm());
 
+        assertShipmentStillValid(freight);
+
         Freight saved = freightRepository.save(freight);
 
         return freightMapper.toResponse(saved);
@@ -162,6 +171,8 @@ public class FreightService {
             freight.setHeightCm(patchFreightRequest.getHeightCm());
         }
 
+        assertShipmentStillValid(freight);
+
         Freight saved = freightRepository.save(freight);
 
         return freightMapper.toResponse(saved);
@@ -191,6 +202,31 @@ public class FreightService {
 
         return freightRepository.findByIdAndShipmentOrderId(freightId, orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Freight with id: " + freightId + " was not found"));
+
+    }
+
+    private void assertShipmentStillValid(Freight freight){
+
+        if (freight.getShipment() == null){
+            return;
+        }
+
+        List<ShipmentSegment> segments = shipmentSegmentRepository.findAllByShipmentId(freight.getShipment().getId());
+
+        transportCompatibilityChecker.assertCapacity(segments, freight.getShipment().getFreights());
+
+        for (ShipmentSegment segment : segments){
+            transportCompatibilityChecker.assertUnitCanCarry(segment.getTransportUnit(), List.of(freight));
+        }
+
+        List<UUID> segmentIds = segments.stream().map(ShipmentSegment::getId).toList();
+
+        if (!segmentIds.isEmpty()){
+            for (CrewAssignment assignment : crewAssignmentRepository.findAllByShipmentSegmentIdIn(segmentIds)){
+                transportCompatibilityChecker.assertCrewMemberIsDangerousGoodsCertified(
+                        assignment.getCrewMember().getLicense(), List.of(freight));
+            }
+        }
 
     }
 

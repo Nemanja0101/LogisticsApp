@@ -6,7 +6,7 @@ CREATE TABLE crew_members
     license_type   VARCHAR(50) NOT NULL,
     issued_at      DATE        NOT NULL,
     expires_at     DATE        NOT NULL,
-    adr_certified  BOOLEAN     NOT NULL DEFAULT FALSE,
+    dangerous_goods_certified  BOOLEAN     NOT NULL DEFAULT FALSE,
     created_at     TIMESTAMP   NOT NULL
 );
 

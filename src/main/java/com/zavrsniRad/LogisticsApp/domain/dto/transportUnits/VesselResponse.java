@@ -17,6 +17,8 @@ public class VesselResponse {
     private UUID id;
     private LocalDateTime createdAt;
     private Set<Capability> capabilities;
+    private Double maxWeightKg;
+    private Double cargoVolumeM3;
     private String imoNumber;
     private String portOfRegistry;
     private String operatedBy;

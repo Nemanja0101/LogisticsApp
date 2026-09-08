@@ -66,7 +66,14 @@ public enum LicenseType {
         public Set<TransportUnitType> allowedTransportUnitTypes() {
             return EnumSet.of(TransportUnitType.RAILCAR);
         }
-    };
+    },
+    PILOT {
+        @Override
+        public Set<TransportUnitType> allowedTransportUnitTypes() {
+            return Set.of(TransportUnitType.AIRCRAFT);
+        }
+    }
+    ;
 
 
     public abstract Set<TransportUnitType> allowedTransportUnitTypes();

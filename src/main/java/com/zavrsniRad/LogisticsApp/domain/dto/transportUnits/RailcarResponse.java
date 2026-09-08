@@ -17,6 +17,8 @@ public class RailcarResponse {
     private UUID id;
     private LocalDateTime createdAt;
     private Set<Capability> capabilities;
+    private Double maxWeightKg;
+    private Double cargoVolumeM3;
     private String wagonNumber;
     private String operatedBy;
 

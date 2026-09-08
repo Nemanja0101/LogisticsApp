@@ -33,6 +33,12 @@ public abstract class TransportUnit {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "max_weight_kg", nullable = false)
+    private Double maxWeightKg;
+
+    @Column(name = "cargo_volume_m3", nullable = false)
+    private Double cargoVolumeM3;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @BatchSize(size = 100)
     @CollectionTable(

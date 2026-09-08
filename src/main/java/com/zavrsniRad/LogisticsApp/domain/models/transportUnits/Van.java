@@ -22,12 +22,6 @@ public class Van extends TransportUnit {
     @Column(name = "license_plate", nullable = false)
     private String licensePlate;
 
-    @Column(name = "max_weight_kg", nullable = false)
-    private Integer maxWeightKg;
-
-    @Column(name = "cargo_volume_m3", nullable = false)
-    private Double cargoVolumeM3;
-
     @Column(nullable = false)
     private String manufacturer;
 

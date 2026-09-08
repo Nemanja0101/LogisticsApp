@@ -94,7 +94,7 @@ public class CrewAssignmentService {
             throw new BusinessRuleViolationException("Crew member's license has expired", new ArrayList<>());
         }
 
-        transportCompatibilityChecker.assertCrewMemberIsAdrCertified(crewMember.getLicense(), shipment.getFreights());
+        transportCompatibilityChecker.assertCrewMemberIsDangerousGoodsCertified(crewMember.getLicense(), shipment.getFreights());
 
         transportCompatibilityChecker
                .assertCrewMemberLicenseValidForSegmentTransportType(

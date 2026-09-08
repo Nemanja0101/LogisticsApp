@@ -27,6 +27,6 @@ public class LicenseDto {
     private LocalDate expiresAt;
 
     @Builder.Default
-    private Boolean adrCertified = false;
+    private Boolean dangerousGoodsCertified = false;
 
 }

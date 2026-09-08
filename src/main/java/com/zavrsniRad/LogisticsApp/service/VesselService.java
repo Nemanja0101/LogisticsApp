@@ -8,6 +8,7 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.VesselMapper;
 import com.zavrsniRad.LogisticsApp.repositories.ShipmentSegmentRepository;
 import com.zavrsniRad.LogisticsApp.repositories.VesselRepository;
+import com.zavrsniRad.LogisticsApp.domain.enums.TransportUnitType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class VesselService {
     private final VesselMapper vesselMapper;
     private final VesselRepository vesselRepository;
     private final ShipmentSegmentRepository shipmentSegmentRepository;
+    private final TransportCompatibilityChecker transportCompatibilityChecker;
 
     public Page<VesselResponse> getAllVessels(Pageable pageable) {
 
@@ -48,6 +50,8 @@ public class VesselService {
                     new ArrayList<>(List.of(createVessel.getImoNumber())));
         }
 
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.VESSEL, createVessel.getCapabilities());
+
         Vessel vessel = vesselMapper.toVessel(createVessel);
         Vessel saved = vesselRepository.save(vessel);
 
@@ -69,6 +73,10 @@ public class VesselService {
         vessel.setImoNumber(updateVessel.getImoNumber());
         vessel.setPortOfRegistry(updateVessel.getPortOfRegistry());
         vessel.setOperatedBy(updateVessel.getOperatedBy());
+        vessel.setMaxWeightKg(updateVessel.getMaxWeightKg());
+        vessel.setCargoVolumeM3(updateVessel.getCargoVolumeM3());
+
+        transportCompatibilityChecker.assertCapabilitiesValidForUnitType(TransportUnitType.VESSEL, updateVessel.getCapabilities());
 
         vessel.getCapabilities().clear();
 
