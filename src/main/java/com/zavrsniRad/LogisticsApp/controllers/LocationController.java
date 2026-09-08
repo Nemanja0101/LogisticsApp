@@ -7,11 +7,14 @@ import com.zavrsniRad.LogisticsApp.domain.dto.shipment.LocationResponse;
 import com.zavrsniRad.LogisticsApp.service.LocationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,11 +25,11 @@ public class LocationController {
     private final LocationService locationService;
 
     @GetMapping
-    public ResponseEntity<?> getAllLocations(){
+    public ResponseEntity<Page<LocationResponse>> getAllLocations(
+            @PageableDefault(sort = {"city", "id"}, direction = Sort.Direction.ASC) Pageable pageable
+    ){
 
-        List<LocationResponse> allLocations = locationService.getAllLocations();
-
-        return ResponseEntity.status(HttpStatus.OK).body(allLocations);
+        return ResponseEntity.status(HttpStatus.OK).body(locationService.getAllLocations(pageable));
 
     }
 

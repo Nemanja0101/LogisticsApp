@@ -8,10 +8,11 @@ import com.zavrsniRad.LogisticsApp.exceptions.ResourceNotFoundException;
 import com.zavrsniRad.LogisticsApp.mappers.LocationMapper;
 import com.zavrsniRad.LogisticsApp.repositories.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,14 +22,10 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
 
-    public List<LocationResponse> getAllLocations(){
+    public Page<LocationResponse> getAllLocations(Pageable pageable){
 
-        List<Location> locations = locationRepository.findAll();
+        return locationRepository.findAll(pageable).map(locationMapper::toResponse);
 
-        return locations
-                .stream()
-                .map(locationMapper::toResponse)
-                .toList();
     }
 
     public LocationResponse getLocation(UUID id) {
