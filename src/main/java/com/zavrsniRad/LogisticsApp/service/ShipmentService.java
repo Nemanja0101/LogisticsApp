@@ -130,7 +130,6 @@ public class ShipmentService {
 
         assertFreightAssignable(freight.getShipmentOrder());
 
-
         freight.setShipment(shipment);
         freightRepository.save(freight);
         shipment.getFreights().add(freight);
