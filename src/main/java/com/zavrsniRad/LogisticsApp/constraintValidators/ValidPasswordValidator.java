@@ -12,10 +12,6 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
-//           ^(?=.*[0-9])        # must contain at least one digit
-//            (?=.*[a-z])        # must contain at least one lowercase letter
-//            (?=.*[A-Z])        # must contain at least one uppercase letter
-//            (?=.*[@#$%^&+=!])  # must contain at least one special character from this set
     private static final String PASSWORD_PATTERN =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?]).{8,}$";
 
